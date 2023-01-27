@@ -1,0 +1,9 @@
+.rightBox{
+    height: 100%;
+    min-height: 520px;
+}
+
+.requestInput{
+    width: 100%;
+    padding: 4px 2px;
+}
