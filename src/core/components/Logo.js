@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { ReactComponent as LogoSvg } from "../assets/svg/Logo.svg"
+import { ReactComponent as LogoSvg } from "../assets/svg/logo.svg"
 
 export default function Logo() {
 
