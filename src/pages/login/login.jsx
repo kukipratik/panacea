@@ -1,4 +1,5 @@
 import * as React from 'react';
+import "./login.css";
 import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -21,8 +22,8 @@ function Copyright(props) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
+            <Link color="inherit" href="/">
+                Panacea
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -35,9 +36,9 @@ const theme = customeTheme
 export default function SignIn() {
     let [email, setEmail] = useState("")
     let [password, setPassword] = useState("")
-    let navigate =  useNavigate()
+    let navigate = useNavigate()
     function ValidateEmail(mail) {
-        if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(mail)){
+        if (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
             return (true)
         }
         alert("You have entered an invalid email address!")
@@ -61,7 +62,7 @@ export default function SignIn() {
             }catch(error){
                 console.log(error)
             }
-        }else{
+        } else {
 
         }
     };
@@ -95,7 +96,7 @@ export default function SignIn() {
                             autoComplete="email"
                             autoFocus
                             value={email}
-                            onChange={(event)=>{
+                            onChange={(event) => {
                                 setEmail(event.target.value)
                             }}
                         />
@@ -108,7 +109,7 @@ export default function SignIn() {
                             type="password"
                             id="password"
                             value={password}
-                            onChange={(event)=>{
+                            onChange={(event) => {
                                 setPassword(event.target.value)
                             }}
                             autoComplete="current-password"
