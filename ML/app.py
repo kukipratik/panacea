@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-app.config['UPLOAD_FOLDER'] = "./"
+app.config['UPLOAD_FOLDER'] = "./ML"
 
 @app.route('/predict', methods=['POST'])
 def apicall():
@@ -19,7 +19,7 @@ def apicall():
     test = np.array(im)
     test = np.expand_dims(test, axis=0)
     
-    model = load_model('./final.h5')
+    model = load_model('./ML/final.h5')
     prediction = model.predict(test)
     predictions = prediction.tolist()[0]
     prediction = np.argmax(predictions)
@@ -42,9 +42,8 @@ def model_upload():
         responses = jsonify(message="please send a file in the request")
         responses.status_code = 400
         return(responses)
-    print(model.filename,"is the name of file")
     if model and model.filename.rsplit('.',1)[1] == "h5":
-        model.save(os.path.join(app.config['UPLOAD_FOLDER'],model.filename))
+        model.save(os.path.join(app.config["UPLOAD_FOLDER"],model.filename))
         responses = jsonify(message="Successfully added model",status=True)
         responses.status_code = 200
         return (responses)
