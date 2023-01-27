@@ -59,6 +59,11 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
+    path:"/addPatient",
+    element:<DetectEyeDisease/>,
+    errorElement:<ErrorPage/>
+  },
+  {
     path: "/patientReport",
     element: <PatientReport />,
     errorElement: <ErrorPage />,

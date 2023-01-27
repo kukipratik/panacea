@@ -8,7 +8,7 @@ import  userSlice  from '../state/userSlice';
 //Only been implemented for health worker for now
 export async function getUserWithMail(mail) {
   let q = query(
-    collection(db, "healthWorker"),
+    collection(db, "user"),
     where("email", "==", mail),
     limit(1)
   );
@@ -17,8 +17,8 @@ export async function getUserWithMail(mail) {
     let result = [];
     data.forEach((snapShot) => {
       let snap = snapShot.data();
-      store.dispatch(userSlice.actions.populate({
-        profession:snap.post,
+      store.dispatch(userSlice.actions.signIn({
+        post:snap.post,
         name:snap.name,
         email:snap.email,
         contactNumber:snap.contactNumber,

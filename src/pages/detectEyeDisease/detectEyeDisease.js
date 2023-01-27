@@ -158,14 +158,14 @@ export default function DetectEyeDisease() {
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={6} sx={{ display: "flex" }}>
-                                        <Typography width={90}>Patient id:</Typography>
+                                        <Typography width={90}>Contact Number :</Typography>
                                         <input
                                             type="text"
                                             className="inputField"
-                                            value={state.patientId}
+                                            value={state.contactNumber}
                                             onChange={(event) => {
                                                 dispatch(patientSlice.actions.updatePatientData({
-                                                    patientId: event.target.value
+                                                    contactNumber: event.target.value
                                                 }))
                                             }}
                                         />
