@@ -6,7 +6,7 @@ import { getUserWithMail } from '../utility/getUser';
 import { signOutFunc } from '../utility/SignInFeatures';
 import userSlice from '../state/userSlice';
 
-export let useAuth = () =>{
+let useAuth = () =>{
     let [user,setUser] = useState(null)
     const email = useSelector((state)=>{
         return state.healthWorker.email
@@ -25,6 +25,7 @@ export let useAuth = () =>{
                                 id:data.id
                             }))
                         }).catch((err)=>{
+                            console.log(err)
                             console.log("some error has occured");
                             signOutFunc()
                             dispatch(userSlice.actions.signOut())
@@ -37,3 +38,5 @@ export let useAuth = () =>{
     })
     return user;
 }
+
+export default useAuth

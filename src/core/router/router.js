@@ -6,8 +6,8 @@ import MarketPlace from "../../pages/marketPlace/marketPlace";
 import ModelDetailPage from "../../pages/modelDetail/modelDetailPage";
 import ProfilePageForEng from "../../pages/profile/profileForEngineer/profilePage";
 import ProfilePage from "../../pages/profile/profilePage";
-import FindReport from '../../pages/findReport/findReport'
 import PatientReport from '../../pages/patientReport/patientReport'
+import SignIn from "../../pages/login/login";
 
 const router = createBrowserRouter([
   //for Home page
@@ -17,6 +17,11 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   //for MarketPlace page
+  {
+    path:"/login",
+    element:<SignIn/>,
+    errorElement:<ErrorPage/>
+  },
   {
     path: "/marketPlace",
     element: <MarketPlace />,

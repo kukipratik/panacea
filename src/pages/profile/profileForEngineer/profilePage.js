@@ -6,7 +6,6 @@ import {
 } from "@mui/material";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-// import profileImage from "../../core/assets/images/profile.jpg";
 import profileImage from "../../../core/assets/images/profile.jpg";
 import customeTheme from "../../../core/theme/themeProvider";
 import Navbar from "../../../core/components/navbar/navbar";
@@ -16,6 +15,8 @@ import { v4 } from 'uuid'
 import { addDoc, arrayUnion, collection, updateDoc, doc, getDocs, limit, getDoc, where, query } from 'firebase/firestore'
 import { db } from '../../../firebase'
 import userSlice from "../../../core/state/userSlice"
+import useAuth from "../../../core/customHooks/useAuth"
+import { useNavigate } from "react-router-dom";
 
 function BuildTabs() {
     const [tabValue, setTabValue] = useState('one');
@@ -33,6 +34,18 @@ function BuildTabs() {
         setTabValue(newValue);
     };
     const dispatch = useDispatch()
+    let loggedUser = useAuth();
+    let navigate = useNavigate()
+    useEffect(() => {
+        let clear = setTimeout(() => {
+          if (!loggedUser) {
+            navigate("/login");
+          }
+        }, 100000);
+        return () => {
+          clearTimeout(clear);
+        }
+      }, [navigate, loggedUser]);
     useEffect(() => {
         let snapShot = []
         Promise.all(user.models.map(async (d) => {

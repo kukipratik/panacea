@@ -25,7 +25,7 @@ export default function Navbar() {
                             <li><a href="/marketPlace">Market Place </a></li>
                             <li><a href="">Solutions</a></li>
                             <li><a href="">Blogs</a></li>
-                            {/* <li><a href="">Items</a></li> */}
+                            <li><a href="/login">Login</a></li>
                             <li><a href="/profile">Profile</a></li>
                         </ul>
                     </nav>
