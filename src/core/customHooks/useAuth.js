@@ -9,7 +9,7 @@ import userSlice from '../state/userSlice';
 let useAuth = () =>{
     let [user,setUser] = useState(null)
     const email = useSelector((state)=>{
-        return state.healthWorker.email
+        return state.user.email
     })
     const dispatch = useDispatch();
     useEffect(()=>{
