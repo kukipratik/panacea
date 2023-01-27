@@ -9,8 +9,8 @@ import Tab from '@mui/material/Tab';
 import profileImage from "../../../core/assets/images/profile.jpg";
 import customeTheme from "../../../core/theme/themeProvider";
 import Navbar from "../../../core/components/navbar/navbar";
-import {getDocs,collection,query,where,limit, doc, getDoc} from "firebase/firestore"
-import {db} from "../../../firebase"
+import { getDocs, collection, query, where, limit, doc, getDoc } from "firebase/firestore"
+import { db } from "../../../firebase"
 import { useDispatch, useSelector } from "react-redux";
 import userSlice from "../../../core/state/userSlice";
 
@@ -23,15 +23,15 @@ function BuildTabs() {
 
     const dispatch = useDispatch()
 
-    let state = useSelector((state)=>{
+    let state = useSelector((state) => {
         return state.userSlice
     })
 
-    useEffect(()=>{
-        let q = query(collection(db,"user"),where("email","==","abc@gmail.com"),limit(1))
-        getDocs(q).then((data)=>{
+    useEffect(() => {
+        let q = query(collection(db, "user"), where("email", "==", "abc@gmail.com"), limit(1))
+        getDocs(q).then((data) => {
             let dataShot = [];
-            data.forEach((d)=>{
+            data.forEach((d) => {
                 let datum = d.data()
                 datum.id = d.id
                 dataShot.push(datum)
@@ -39,9 +39,9 @@ function BuildTabs() {
             dispatch(userSlice.actions.signIn({
                 ...dataShot[0]
             }));
-            let snapShot=[]
-            Promise.all(dataShot[0].models.map(async (d)=>{
-                let docRef = doc(collection(db,"model"),d)
+            let snapShot = []
+            Promise.all(dataShot[0].models.map(async (d) => {
+                let docRef = doc(collection(db, "model"), d)
                 try {
                     const snap = await getDoc(docRef);
                     let snapData = snap.data();
@@ -49,13 +49,13 @@ function BuildTabs() {
                 } catch (error) {
                     console.log(error);
                 }
-            })).then(()=>{
+            })).then(() => {
                 dispatch(userSlice.actions.addModels(snapShot))
             })
-        }).catch((error)=>{
+        }).catch((error) => {
             console.log(error)
         })
-    },[])
+    }, [])
 
     return (
         <Box display="flex" flexDirection="column" sx={{ width: '100%' }} >
@@ -71,97 +71,80 @@ function BuildTabs() {
             </Box>
 
             {/* Your Model Section */}
-            {(tabValue == 'one') ? (             
+            {(tabValue == 'one') ? (
                 <Box padding={2} >
-                    <Box component="div" display="flex" justifyContent="space-between" paddingX={1.5} paddingBottom={2.5} >
-                        {/* <Typography component="span" variant="h6" gutterBottom>Your Requests</Typography> */}
-                    </Box>
+
                     <Grid container rowSpacing={4} marginBottom={2}
                         columnSpacing={{ xs: 1, md: 2 }} >
-                        <Grid item xs={12} md={6}>
-                            <Box display="flex" flexDirection="column"
-                                bgcolor="white" paddingX={4} paddingY={2}>
-                                <Typography variant="h5" gutterBottom >
-                                    <b>Can someone make model for measuring mental stress?</b>
+                        <Grid item xs={12} md={12} display="flex" justifyContent="center"
+                            marginX={20} >
+                            <label className="label" for="filter">
+                                <Typography variant="h6" component="span" marginRight={2} >
+                                    Filter :
                                 </Typography>
-                                <Typography>
-                                    We have psychiatrist for our mental health related patients, but it will be much
-                                    easier if we can use ML model for the treatment of our patient. We want the best optimized model for this problem.
-                                </Typography>
-                                <Box height={12} ></Box>
-                                <Button>Cancel Request</Button>
-                            </Box>
+                            </label>
+                            <select id="filter" name="cars">
+                                <option value="1">A-eye.ai</option>
+                                <option value="2">Lungs Detection</option>
+                            </select>
                         </Grid>
                     </Grid>
 
-                    <Box component="div" display="flex" justifyContent="space-between" paddingX={1.5} >
-                        <Typography component="span" variant="h6" gutterBottom>Make New Request</Typography>
-                    </Box>
-                    <Box minHeight={420} bgcolor="white" paddingY={4} paddingX={2} >
-                        <form>
-                            <fieldset>
-                                <legend>
-                                    <Typography component="div">Make New Request</Typography>
-                                </legend>
-
-                                <Box className="newSection" minHeight={200}
-                                    paddingY={2} paddingX={4}>
-                                    <Grid
-                                        container
-                                        rowSpacing={5}
-                                        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                                    >
-                                        <Grid item xs={12} sx={{ display: "flex" }}>
-                                            <Typography width={120}>Title:</Typography>
-                                            <input
-                                                type="text"
-                                                className="requestInput"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sx={{ display: "flex" }}>
-                                            <Typography width={120}>Description:</Typography>
-                                            <textarea className="requestInput" rows="5" cols="60" name="description" />
-                                        </Grid>
-                                    </Grid>
-                                </Box>
-                            </fieldset>
-                            <Box marginY={5} display="flex" justifyContent="center" >
-                                <Button variant="contained" >
-                                    <Typography width={170}>
-                                        Make Request
-                                    </Typography>
-                                </Button>
-                            </Box>
-                        </form>
+                    {/* show result table */}
+                    <Box marginX={2}>
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    {/* <th>Age</th> */}
+                                    <th>Disease (Left)</th>
+                                    <th>Accuracy% (Left)</th>
+                                    <th>Disease (Right)</th>
+                                    <th>Accuracy% (Right)</th>
+                                </tr>
+                            </thead>
+                            {/* <tbody>
+                {report.map((r,i)=>{
+                  return   <tr key={i}>
+                  <td data-label="Name"><Link to="/patientReport" state={r}> {r.name} </Link></td>
+                  <td data-label="Disease">{disease[r?.leftEyeResult?.prediction]}</td>
+                  <td data-label="Risk%">{parseFloat(r?.leftEyeResult?.percentage).toFixed(4)*100}%</td>
+                  <td data-label="Disease">{disease[r?.rightEyeResult?.prediction]}</td>
+                  <td data-label="Risk%">{parseFloat(r?.rightEyeResult?.percentage).toFixed(4)*100}%</td>
+                  <td data-label="feedback">{r?.approval==-1?"Discarded":r?.approval==1?"Approved":"Waiting"}</td>
+                </tr>
+                })}
+              </tbody> */}
+                        </table>
                     </Box>
                 </Box>
             ) : (
                 <Box padding={2} >
-                <Box component="div" display="flex" justifyContent="space-between" paddingX={1.5} paddingBottom={2.5} >
-                    <Typography component="span" gutterBottom variant="h6">Your Models</Typography>
-                    {/* <Typography component="span" gutterBottom> */}
-                    <Link href="/marketPlace" >Find More</Link>
-                    {/* </Typography> */}
-                </Box>
-                <Grid container rowSpacing={4} marginBottom={2}
-                    columnSpacing={{ xs: 1, md: 2 }} >
-                {state?.modelDetail?.map((details,index)=>{
-                    return <Grid key={index} item xs={12} md={6}>
-                        <Box display="flex" flexDirection="column"
-                            bgcolor="white" paddingX={4} paddingY={2}>
-                            <Typography variant="h5" gutterBottom >
-                                <b>{details.title}</b>
-                            </Typography>
-                            <Typography>
-                                {details.description}
-                            </Typography>
-                            <Box height={12} ></Box>
-                            <Button>Start</Button>
-                        </Box>
+                    <Box component="div" display="flex" justifyContent="space-between" paddingX={1.5} paddingBottom={2.5} >
+                        <Typography component="span" gutterBottom variant="h6">Your Models</Typography>
+                        {/* <Typography component="span" gutterBottom> */}
+                        <Link href="/marketPlace" >Find More</Link>
+                        {/* </Typography> */}
+                    </Box>
+                    <Grid container rowSpacing={4} marginBottom={2}
+                        columnSpacing={{ xs: 1, md: 2 }} >
+                        {state?.modelDetail?.map((details, index) => {
+                            return <Grid key={index} item xs={12} md={6}>
+                                <Box display="flex" flexDirection="column"
+                                    bgcolor="white" paddingX={4} paddingY={2}>
+                                    <Typography variant="h5" gutterBottom >
+                                        <b>{details.title}</b>
+                                    </Typography>
+                                    <Typography>
+                                        {details.description}
+                                    </Typography>
+                                    <Box height={12} ></Box>
+                                    <Button>Start</Button>
+                                </Box>
+                            </Grid>
+                        })}
                     </Grid>
-                })}
-                </Grid>
-            </Box> 
+                </Box>
             )}
         </Box>
     );
@@ -171,7 +154,7 @@ export default function ProfilePageForDoctor() {
     const imgRadius = 250;
     const theme = useTheme();
     const isMob = useMediaQuery(theme.breakpoints.down("md"));
-    const state = useSelector((state=>{
+    const state = useSelector((state => {
         return state.userSlice
     }))
     return (
