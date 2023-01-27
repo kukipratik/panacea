@@ -65,43 +65,16 @@ function BuildTabs() {
                     onChange={handleChange}
                     indicatorColor="primary"
                 >
-                    <Tab value="one" label="Your Models" />
-                    <Tab value="two" label="Requests" />
+                    <Tab value="one" label="Patients Report" />
+                    <Tab value="two" label="Use Models" />
                 </Tabs>
             </Box>
 
             {/* Your Model Section */}
-            {(tabValue == 'one') ? (
+            {(tabValue == 'one') ? (             
                 <Box padding={2} >
                     <Box component="div" display="flex" justifyContent="space-between" paddingX={1.5} paddingBottom={2.5} >
-                        <Typography component="span" gutterBottom variant="h6">Your Models</Typography>
-                        {/* <Typography component="span" gutterBottom> */}
-                        <Link href="/marketPlace" >Find More</Link>
-                        {/* </Typography> */}
-                    </Box>
-                    <Grid container rowSpacing={4} marginBottom={2}
-                        columnSpacing={{ xs: 1, md: 2 }} >
-                    {state?.modelDetail?.map((details,index)=>{
-                        return <Grid key={index} item xs={12} md={6}>
-                            <Box display="flex" flexDirection="column"
-                                bgcolor="white" paddingX={4} paddingY={2}>
-                                <Typography variant="h5" gutterBottom >
-                                    <b>{details.title}</b>
-                                </Typography>
-                                <Typography>
-                                    {details.description}
-                                </Typography>
-                                <Box height={12} ></Box>
-                                <Button>Start</Button>
-                            </Box>
-                        </Grid>
-                    })}
-                    </Grid>
-                </Box>
-            ) : (
-                <Box padding={2} >
-                    <Box component="div" display="flex" justifyContent="space-between" paddingX={1.5} paddingBottom={2.5} >
-                        <Typography component="span" variant="h6" gutterBottom>Your Requests</Typography>
+                        {/* <Typography component="span" variant="h6" gutterBottom>Your Requests</Typography> */}
                     </Box>
                     <Grid container rowSpacing={4} marginBottom={2}
                         columnSpacing={{ xs: 1, md: 2 }} >
@@ -162,6 +135,33 @@ function BuildTabs() {
                         </form>
                     </Box>
                 </Box>
+            ) : (
+                <Box padding={2} >
+                <Box component="div" display="flex" justifyContent="space-between" paddingX={1.5} paddingBottom={2.5} >
+                    <Typography component="span" gutterBottom variant="h6">Your Models</Typography>
+                    {/* <Typography component="span" gutterBottom> */}
+                    <Link href="/marketPlace" >Find More</Link>
+                    {/* </Typography> */}
+                </Box>
+                <Grid container rowSpacing={4} marginBottom={2}
+                    columnSpacing={{ xs: 1, md: 2 }} >
+                {state?.modelDetail?.map((details,index)=>{
+                    return <Grid key={index} item xs={12} md={6}>
+                        <Box display="flex" flexDirection="column"
+                            bgcolor="white" paddingX={4} paddingY={2}>
+                            <Typography variant="h5" gutterBottom >
+                                <b>{details.title}</b>
+                            </Typography>
+                            <Typography>
+                                {details.description}
+                            </Typography>
+                            <Box height={12} ></Box>
+                            <Button>Start</Button>
+                        </Box>
+                    </Grid>
+                })}
+                </Grid>
+            </Box> 
             )}
         </Box>
     );
