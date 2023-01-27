@@ -32,9 +32,6 @@ function BuildTabs() {
     let [severity, setSeverity] = useState("info")
     let [field, setField] = useState("")
     let [value, setValue] = useState("text")
-    const handleChange = (newValue) => {
-        setTabValue(newValue);
-    };
     const dispatch = useDispatch()
     let loggedUser = useAuth();
     let navigate = useNavigate()
@@ -110,12 +107,11 @@ function BuildTabs() {
             <Box bgcolor="white" paddingTop={1} sx={{ width: '100%' }}>
                 <Tabs
                     value={tabValue}
-                    onChange={handleChange}
                     indicatorColor="primary"
                 >
-                    <Tab value="one" label="Your Models" />
-                    <Tab value="two" label="New Requests" />
-                    <Tab value="three" label="Upload Model" />
+                    <Tab onClick={()=>{setTabValue("one")}} label="Your Models" value="one"/>
+                    <Tab value="two" label="New Requests" onClick={()=>{setTabValue("two")}}/>
+                    <Tab value="three" label="Upload Model" onClick={()=>{setTabValue("three")}}/>
                 </Tabs>
             </Box>
 

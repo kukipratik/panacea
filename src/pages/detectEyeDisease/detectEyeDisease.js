@@ -211,7 +211,7 @@ export default function DetectEyeDisease() {
                                                 justifyContent: "center",
                                             }}
                                         >
-                                            <Typography marginBottom={1}>Left Eye:</Typography>
+                                            <Typography marginBottom={1}>{image.field}:</Typography>
                                             <Box
                                                 border="solid"
                                                 borderColor="gray"

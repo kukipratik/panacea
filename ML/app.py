@@ -22,11 +22,16 @@ def apicall():
     test = np.expand_dims(test, axis=0)
     
     model = load_model(f'./ML/{modelName}')
-    prediction = model.predict(test)
+    try:
+        prediction = model.predict(test)
+    except ValueError :
+        im = Image.open(image)
+        test = np.array(im)
+        test = np.expand_dims(test, axis=0)
+        prediction = model.predict(test)
     predictions = prediction.tolist()[0]
     prediction = np.argmax(predictions)
     percentage = predictions[prediction]
-    print(classifiers[prediction])
     responses = jsonify(prediction=json.dumps(classifiers[prediction]), percentage=json.dumps(percentage))
     responses.status_code = 200
 

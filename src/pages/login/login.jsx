@@ -60,7 +60,7 @@ export default function SignIn() {
                     }
                 })
             }catch(error){
-                console.log(error)
+                console.log(error,"ata login")
             }
         } else {
 
