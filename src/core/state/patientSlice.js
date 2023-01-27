@@ -3,7 +3,7 @@ export const patientSlice = createSlice({
     name:"patientSlice",
     initialState:{
         name:"",
-        patientId:"",
+        contactNumber:"",
         leftEyePhoto:"",
         rightEyePhoto:""
     },

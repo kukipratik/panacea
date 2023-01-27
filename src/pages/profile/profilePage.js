@@ -13,9 +13,11 @@ import {getDocs,collection,query,where,limit, doc, getDoc} from "firebase/firest
 import {db} from "../../firebase"
 import { useDispatch, useSelector } from "react-redux";
 import userSlice from "../../core/state/userSlice";
+import { useNavigate } from "react-router-dom";
 
 function BuildTabs() {
     const [tabValue, setTabValue] = useState('one');
+    const navigate = useNavigate()
 
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
@@ -92,7 +94,11 @@ function BuildTabs() {
                                     {details.description}
                                 </Typography>
                                 <Box height={12} ></Box>
-                                <Button>Start</Button>
+                                <Button onClick={(event)=>{
+                                    navigate('/addPatient',{
+                                        state:details
+                                    })
+                                }}>Start</Button>
                             </Box>
                         </Grid>
                     })}

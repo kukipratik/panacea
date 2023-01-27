@@ -16,6 +16,7 @@ import customeTheme from '../../core/theme/themeProvider';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
+import { getUserWithMail } from '../../core/utility/getUser';
 
 function Copyright(props) {
     return (
@@ -45,12 +46,20 @@ export default function SignIn() {
     }
     const handleSubmit = async (event) => {
         event.preventDefault()
-        if (ValidateEmail(email)) {
-            try {
-                console.log(email, password)
-                await signInWithEmailAndPassword(auth, email, password)
-                navigate('/profile')
-            } catch (error) {
+        if(ValidateEmail(email)){
+            try{
+                console.log(email,password)
+                await signInWithEmailAndPassword(auth,email,password)
+                getUserWithMail(email).then((data)=>{
+                    console.log("userData",data)
+                    if(data.post==="engineer"){
+                        console.log("why not here")
+                        navigate('/profileForEngineer')
+                    }else{
+                        navigate("/profile")
+                    }
+                })
+            }catch(error){
                 console.log(error)
             }
         } else {
