@@ -6,7 +6,8 @@ const modelSlice = createSlice({
         title:"",
         description:"",
         model:"",
-        classes:[]
+        classes:[],
+        input:[]
     },
     reducers:{
         update:(state,action)=>{
