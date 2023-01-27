@@ -1,0 +1,10 @@
+.form-control {
+    width: 100%;
+    position: relative;
+    margin-bottom: 24px;
+}
+.error{
+    color:red;
+    margin:10px;
+    margin-bottom: 20px;
+}
