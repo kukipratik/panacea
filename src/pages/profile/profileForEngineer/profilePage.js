@@ -30,7 +30,9 @@ function BuildTabs() {
     let [open, setOpen] = useState(false)
     let [message, setMessage] = useState("")
     let [severity, setSeverity] = useState("info")
-    const handleChange = (event, newValue) => {
+    let [field, setField] = useState("")
+    let [value, setValue] = useState("text")
+    const handleChange = (newValue) => {
         setTabValue(newValue);
     };
     const dispatch = useDispatch()
@@ -38,14 +40,14 @@ function BuildTabs() {
     let navigate = useNavigate()
     useEffect(() => {
         let clear = setTimeout(() => {
-          if (!loggedUser) {
-            navigate("/login");
-          }
-        }, 100000);
+            if (!loggedUser) {
+                navigate("/login");
+            }
+        }, 1000);
         return () => {
-          clearTimeout(clear);
+            clearTimeout(clear);
         }
-      }, [navigate, loggedUser]);
+    }, [navigate, loggedUser]);
     useEffect(() => {
         let snapShot = []
         Promise.all(user.models.map(async (d) => {
@@ -92,7 +94,8 @@ function BuildTabs() {
             name: nameOfBlob,
             description: state.description,
             title: state.title,
-            classes: state.classes
+            classes: state.classes,
+            input:state.input
         })
         console.log(addeddoc)
         await updateDoc(doc(collection(db, "user"), user.id), {
@@ -205,7 +208,7 @@ function BuildTabs() {
                                                     }} />
                                             </Grid>
                                             <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
-                                                <Typography width={120}>Classes:</Typography>
+                                                <Typography width={120}>Classes :</Typography>
                                                 <Grid sx={{ display: "flex", flexDirection: "column", margin: "3px" }}>
                                                     {state.classes.map((d) => {
                                                         return <div><Typography width={100}>{d}</Typography></div>
@@ -218,6 +221,38 @@ function BuildTabs() {
                                                             event.target.value = ""
                                                         }
                                                     }}></input></Grid>
+                                            </Grid>
+                                            <Grid item xs={12} sx={{ display: "flex", flexDirection: "row" }}>
+                                                <Typography width={120}>Input Field :</Typography>
+                                                <Grid sx={{ display: "flex", flexDirection: "column", margin: "3px",gap:"12px" }}>
+                                                    {state.input.map((d) => {
+                                                        return <Grid component="div" sx={{ display: "flex", justifyContent: "space-around" }}><Typography width={100}>{d.field}</Typography>
+                                                            <Typography>{d.value}</Typography></Grid>
+                                                    })}
+                                                    <Grid component="div" sx={{ display: "flex", jusityContent: "space-around" ,gap:"12px"}}>
+                                                        <input value={field} onChange={(event) => {
+                                                            setField(event.target.value)
+                                                        }} />
+                                                        <select onChange={(event) => {
+                                                            setValue(event.target.value)
+                                                        }}>
+                                                            <option value="text" default>Text</option>
+                                                            <option value="number">Number</option>
+                                                            <option value="image/jpg">Image/jpg</option>
+                                                            <option value="image/png">Image/png</option>
+                                                            <option value="image/jpeg">Image/jpeg</option>
+                                                        </select>
+                                                        <Button variant="outlined" onClick={(event) => {
+                                                            dispatch(modelSlice.actions.update({
+                                                                input: [...state.input, {
+                                                                    field: field,
+                                                                    value: value
+                                                                }]
+                                                            }))
+                                                            setField("")
+                                                        }}>Add</Button>
+                                                    </Grid>
+                                                </Grid>
                                             </Grid>
                                             <Grid item xs={12} sx={{ display: "flex" }}>
                                                 <Typography width={120}>.h5 file:</Typography>
@@ -264,6 +299,7 @@ function BuildTabs() {
         </Box>
     );
 }
+
 
 export default function ProfilePageForEng() {
     const imgRadius = 250;

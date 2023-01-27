@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import DetectEyeDisease from "../../pages/detectEyeDisease/detectEyeDisease";
 import ErrorPage from "../../pages/errorPage";
 import HomePage from "../../pages/home/homePage";
@@ -8,6 +8,7 @@ import ProfilePageForEng from "../../pages/profile/profileForEngineer/profilePag
 import ProfilePage from "../../pages/profile/profilePage";
 import PatientReport from '../../pages/patientReport/patientReport'
 import SignIn from "../../pages/login/login";
+import ProfilePageForDoctor from "../../pages/profile/profileForDoctor/profilePage";
 
 const router = createBrowserRouter([
   //for Home page
@@ -50,6 +51,17 @@ const router = createBrowserRouter([
     path: "/profileForEngineer",
     element: <ProfilePageForEng />,
     errorElement: <ErrorPage />,
+  },
+  //for Profile page for doctors
+  {
+    path: "/profileForDoctor",
+    element: <ProfilePageForDoctor/>,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path:"/addPatient",
+    element:<DetectEyeDisease/>,
+    errorElement:<ErrorPage/>
   },
   {
     path: "/patientReport",
