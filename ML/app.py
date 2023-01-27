@@ -15,18 +15,19 @@ def apicall():
     image = request.files.getlist('files[]')[0]
     im = Image.open(image)
     im = im.resize((150,150))
-    
+    modelName = request.form.get("model")
+    classifiers = request.form.get("classifier").split(',')
+    print(classifiers,"classifiers")
     test = np.array(im)
     test = np.expand_dims(test, axis=0)
     
-    model = load_model('./ML/final.h5')
+    model = load_model(f'./ML/{modelName}')
     prediction = model.predict(test)
     predictions = prediction.tolist()[0]
     prediction = np.argmax(predictions)
-    print(prediction)
     percentage = predictions[prediction]
-
-    responses = jsonify(prediction=json.dumps(str(prediction)), percentage=json.dumps(percentage))
+    print(classifiers[prediction])
+    responses = jsonify(prediction=json.dumps(classifiers[prediction]), percentage=json.dumps(percentage))
     responses.status_code = 200
 
     return (responses)

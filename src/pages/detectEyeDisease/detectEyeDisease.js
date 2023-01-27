@@ -21,6 +21,7 @@ export default function DetectEyeDisease() {
     // const isMob = useMediaQuery(theme.breakpoints.down("md"));
     let navigate = useNavigate()
     let data = useLocation().state.data
+    console.log(data)
     let imageField = []
     let textField = []
     let numberField = []
@@ -79,6 +80,8 @@ export default function DetectEyeDisease() {
         console.log(EyePhoto)
         let image = await fetch(EyePhoto).then(r => r.blob())
         bodyContent.append("files[]", image);
+        bodyContent.append("model",data.name)
+        bodyContent.append("classifier",data.classes)
         let response = await fetch("http://127.0.0.01:5000/predict", {
             method: "POST",
             body: bodyContent
