@@ -13,14 +13,30 @@ import { v4 } from 'uuid'
 import { getDownloadURL, uploadBytes, ref } from 'firebase/storage'
 import { collection, addDoc } from 'firebase/firestore'
 import { storage, db } from '../../firebase'
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function DetectEyeDisease() {
 
     // const theme = useTheme();
     // const isMob = useMediaQuery(theme.breakpoints.down("md"));
     let navigate = useNavigate()
-
+    let data = useLocation().state.data
+    let imageField = []
+    let textField = []
+    let numberField = []
+    data.input.forEach((d) => {
+        if (d.value.includes("image")) {
+            imageField.push({
+                field: d.field,
+                ext: `.${d.value.split('/')[1]}`
+            })
+        } else if (d.value.includes("text")) {
+            textField.push(d.field)
+        } else {
+            numberField.push(d.field)
+        }
+    })
+    console.log(imageField, textField, numberField)
     let state = useSelector((state) => {
         return state.patientSlice
     })
@@ -30,7 +46,7 @@ export default function DetectEyeDisease() {
     let [severity, setSeverity] = useState("info")
     let dispatch = useDispatch()
     let checkError = () => {
-        if (state.patientId === "") {
+        if (state.contactNumber === "") {
             setError("patient id is missing")
             return false
         }
@@ -38,13 +54,8 @@ export default function DetectEyeDisease() {
             setError("patient name is missing")
             return false
         }
-        if (state.leftEyePhoto === "") {
-            setError("please upload left eye image")
-            return false
-        }
-        if (state.rightEyePhoto === "") {
-            setError("please upload right eye image")
-            return false
+        if(state.inputField.length !== imageField.length){
+            setError("all image have not been uploaded")
         }
         return true
     }
@@ -63,7 +74,7 @@ export default function DetectEyeDisease() {
         console.log(x, "is the url");
         return x;
     }
-    const generateResult = async (EyePhoto) => {
+    let generateResult = async (EyePhoto) => {
         let bodyContent = new FormData();
         console.log(EyePhoto)
         let image = await fetch(EyePhoto).then(r => r.blob())
@@ -75,16 +86,21 @@ export default function DetectEyeDisease() {
         response = await response.json();
         return response
     }
-    async function storeUserData(y, z, leftEyeResult, rightEyeResult) {
-        const docRef = await addDoc(collection(db, "Patients"), {
+    async function storeUserData(image,result) {
+        console.log(Object.keys(state.inputField))
+        console.log({
             name: state.name,
-            patientId: state.patientId,
-            leftEyePhoto: y,
-            rightEyePhoto: z,
-            leftEyeResult: leftEyeResult,
-            rightEyeResult: rightEyeResult,
-            approval: 0,
-            risk: parseInt(leftEyeResult.percentage) + parseInt(rightEyeResult.percentage)
+            contactNumber:state.contactNumber,
+            image:image,
+            field:Object.keys(state.inputField),
+            result:result
+        })
+        await addDoc(collection(db, "Patients"), {
+            name: state.name,
+            contactNumber:state.contactNumber,
+            image:image,
+            field:[...Object.keys(state.inputField)],
+            result:result
         }).catch((error) => {
             console.log(error)
         });
@@ -95,11 +111,22 @@ export default function DetectEyeDisease() {
             setMessage("Please wait");
             setSeverity("success");
             try {
-                let y = await storeImage(state.leftEyePhoto);
-                let z = await storeImage(state.rightEyePhoto);
-                let leftEyeResult = await generateResult(state.leftEyePhoto);
-                let rightEyeResult = await generateResult(state.rightEyePhoto);
-                await storeUserData(y, z, leftEyeResult, rightEyeResult);
+                let storeImg=[]
+                let generateRes=[]
+                if(state.inputField){
+                    await Promise.all(Object.values(state.inputField).map(async (val)=>{
+                        let x= await storeImage(val)
+                        let resultX= await generateResult(val)
+                        storeImg.push(x)
+                        generateRes.push(resultX)
+                    }))
+                }
+                // let y = await storeImage(state.leftEyePhoto);
+                // let z = await storeImage(state.rightEyePhoto);
+                // let leftEyeResult = await generateResult(state.leftEyePhoto);
+                // let rightEyeResult = await generateResult(state.rightEyePhoto);
+                // await storeUserData(y, z, leftEyeResult, rightEyeResult);
+                await storeUserData(storeImg,generateRes);
                 setOpen(true)
                 setMessage("Success ! going to find ResultPage");
                 setSeverity("success");
@@ -107,18 +134,17 @@ export default function DetectEyeDisease() {
                     navigate('/patientReport', {
                         state: {
                             name: state.name,
-                            patientId: state.patientId,
-                            leftEyePhoto: y,
-                            rightEyePhoto: z,
-                            leftEyeResult: leftEyeResult,
-                            rightEyeResult: rightEyeResult,
-                            approval: 0,
-                            risk: parseInt(leftEyeResult.percentage) + parseInt(rightEyeResult.percentage)
+                            patientId: state.contactNumber,
+                            field:Object.keys(state.inputField),
+                            result:generateRes,
+                            image:storeImg,
+                            approval: 0
                         }
                     })
                 }, 1000)
             }
             catch (err) {
+                console.log(err)
                 setOpen(true);
                 setMessage("Some error occured")
                 setSeverity("error")
@@ -170,116 +196,62 @@ export default function DetectEyeDisease() {
                                             }}
                                         />
                                     </Grid>
-
-                                    {/* for left image */}
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        md={6}
-                                        sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            flexDirection: "column",
-                                            justifyContent: "center",
-                                        }}
-                                    >
-                                        <Typography marginBottom={1}>Left Eye:</Typography>
-                                        <Box
-                                            border="solid"
-                                            borderColor="gray"
-                                            marginRight={2}
-                                            marginBottom={1}
+                                    {imageField.map((image) => {
+                                        return <Grid
+                                            item
+                                            xs={12}
+                                            md={6}
                                             sx={{
                                                 display: "flex",
                                                 alignItems: "center",
-                                                justifyContent: "center",
                                                 flexDirection: "column",
-                                            }}
-                                            borderRadius={2}
-                                            width={280}
-                                            height={171}
-                                        >{state.leftEyePhoto === "" ? <>
-                                            <AddAPhotoIcon fontSize="large" />
-                                            <Typography> Add Photo </Typography>
-                                        </> : <img src={state.leftEyePhoto} alt="patient" className="uploadImage" />}
-                                        </Box>
-
-                                        <Box component="label" display="flex" justifyContent="center">
-                                            <Paper elevation={2} className="paperBtn">
-                                                <Typography color="white">Upload Image</Typography>
-                                            </Paper>
-                                            <input
-                                                type="file"
-                                                name="image"
-                                                hidden
-                                                onChange={(event) => {
-                                                    console.log("has there been some changes")
-                                                    let url = window.URL.createObjectURL(event.target.files[0])
-                                                    console.log(url);
-                                                    dispatch(patientSlice.actions.updatePatientData({
-                                                        leftEyePhoto: url
-                                                    }))
-                                                }}
-                                                accept=".jpg,.jpeg"
-                                            />
-                                        </Box>
-                                    </Grid>
-
-                                    {/* for Right image */}
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        md={6}
-                                        sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            flexDirection: "column",
-                                            justifyContent: "center",
-                                        }}
-                                    >
-                                        <Typography marginBottom={1}>Right Eye:</Typography>
-                                        <Box
-                                            border="solid"
-                                            borderColor="gray"
-                                            marginRight={2}
-                                            marginBottom={1}
-                                            sx={{
-                                                display: "flex",
-                                                alignItems: "center",
                                                 justifyContent: "center",
-                                                flexDirection: "column",
                                             }}
-                                            borderRadius={2}
-                                            width={280}
-                                            height={171}
                                         >
-                                            {state.rightEyePhoto === "" ? <>
+                                            <Typography marginBottom={1}>Left Eye:</Typography>
+                                            <Box
+                                                border="solid"
+                                                borderColor="gray"
+                                                marginRight={2}
+                                                marginBottom={1}
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    flexDirection: "column",
+                                                }}
+                                                borderRadius={2}
+                                                width={280}
+                                                height={171}
+                                            >{state?.inputField?.[image.field]===undefined? <>
                                                 <AddAPhotoIcon fontSize="large" />
                                                 <Typography> Add Photo </Typography>
-                                            </> : <img src={state.rightEyePhoto} alt="patient" className="uploadImage" />}
-
-                                        </Box>
-
-                                        <Box component="label" display="flex" justifyContent="center">
-                                            <Paper elevation={2} className="paperBtn">
-                                                <Typography color="white">Upload Image</Typography>
-                                            </Paper>
-                                            <input
-                                                type="file"
-                                                name="image"
-                                                hidden
-                                                onChange={(event) => {
-                                                    console.log("has there been some changes")
-                                                    let url = window.URL.createObjectURL(event.target.files[0])
-                                                    console.log(url);
-                                                    dispatch(patientSlice.actions.updatePatientData({
-                                                        rightEyePhoto: url
-                                                    }))
-                                                }}
-                                                accept=".jpg,.jpeg"
-                                            />
-                                        </Box>
-                                    </Grid>
+                                            </> : <img src={state?.inputField?.[image.field]} alt="patient" className="uploadImage" />}
+                                            </Box>
+                                            <Box component="label" display="flex" justifyContent="center">
+                                                <Paper elevation={2} className="paperBtn">
+                                                    <Typography color="white">Upload Image</Typography>
+                                                </Paper>
+                                                <input
+                                                    type="file"
+                                                    name="image"
+                                                    hidden
+                                                    onChange={(event) => {
+                                                        console.log("has there been some changes")
+                                                        let url = window.URL.createObjectURL(event.target.files[0])
+                                                        console.log(url);
+                                                        dispatch(patientSlice.actions.updatePatientData({
+                                                            inputField:{
+                                                                ...state?.inputField,
+                                                                [image.field]:url
+                                                            }
+                                                        }))
+                                                    }}
+                                                    accept=".jpg,.jpeg"
+                                                />
+                                            </Box>
+                                        </Grid>
+                                    })}
                                 </Grid>
                             </Box>
                         </fieldset>

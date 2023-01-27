@@ -68,7 +68,13 @@ const ShowDetail = ({ data }) => {
                 <Grid container rowSpacing={2} marginX={5} marginBottom={2}
                     columnSpacing={{ xs: 1, sm: 2, md: 3 }} >
                     <Grid item xs={12} md={6} display="flex" justifyContent="center" >
-                        <Button fullWidth variant="contained" href="/detectEyeDisease" >Try it</Button>
+                        <Button fullWidth variant="contained" onClick={(event)=>{
+                            navigate('/addPatient',{
+                                state:{
+                                    data:data
+                                }
+                            })
+                        }}>Try it</Button>
                     </Grid>
                     <Grid item xs={12} md={6} display="flex" justifyContent="center" >
                         <Button fullWidth variant="contained" onClick={(event) => {
